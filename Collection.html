@@ -177,18 +177,27 @@ html[data-theme="dark"] .cell.draft .draft-badge { background: var(--surface); b
 html[data-theme="dark"] .cell.draft .by { color: oklch(0.80 0.10 70); }
 
 /* — Uncollected: faint placeholder slot (number + name + silhouette) — */
-.cell.todo { background: var(--bg-subtle); border-style: dashed; border-color: var(--border-strong); }
-.cell.todo:hover { border-color: var(--accent-line); background: var(--accent-soft); }
+.cell.todo { background: oklch(0.96 0.018 var(--th)); border-style: dashed; border-color: oklch(0.80 0.06 var(--th)); }
+html[data-theme="dark"] .cell.todo { background: oklch(0.20 0.018 var(--th)); border-color: oklch(0.34 0.06 var(--th)); }
+.cell.todo:hover { border-color: oklch(0.68 0.10 var(--th)); background: oklch(0.93 0.030 var(--th)); }
+html[data-theme="dark"] .cell.todo:hover { border-color: oklch(0.52 0.10 var(--th)); background: oklch(0.25 0.030 var(--th)); }
 .cell.todo .photo { display: grid; place-items: center; }
 .cell.todo .ghost-num { font-family: var(--font-display); font-weight: 700; font-size: 40px;
   color: var(--text-ghost); opacity: 0.55; letter-spacing: -0.03em; }
 .cell.todo .silhouette { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.5; }
-.cell.todo .silhouette .blob { width: 46%; height: 46%; border-radius: 44% 56% 58% 42% / 50% 44% 56% 50%;
-  background: oklch(0.88 0.012 var(--th)); }
-html[data-theme="dark"] .cell.todo .silhouette .blob { background: oklch(0.30 0.014 var(--th)); }
-.cell.todo .nm { color: var(--text-faint); }
-.cell.todo .add-hint { display: flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 11.5px; color: var(--accent);
+.cell.todo .silhouette .blob { width: 52%; height: 52%; border-radius: 44% 56% 58% 42% / 50% 44% 56% 50%;
+  background: oklch(0.78 0.08 var(--th)); }
+html[data-theme="dark"] .cell.todo .silhouette .blob { background: oklch(0.32 0.08 var(--th)); }
+.cell.todo .poke-img {
+  position: absolute; width: 78%; height: auto; z-index: 3;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 12px oklch(0.25 0.08 var(--th) / 0.30));
+}
+.cell.todo .nm { color: oklch(0.42 0.08 var(--th)); }
+html[data-theme="dark"] .cell.todo .nm { color: oklch(0.78 0.08 var(--th)); }
+.cell.todo .add-hint { display: flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 11.5px; color: oklch(0.50 0.12 var(--th));
   opacity: 0; transform: translateY(2px); transition: all var(--dur) var(--ease); }
+html[data-theme="dark"] .cell.todo .add-hint { color: oklch(0.75 0.12 var(--th)); }
 .cell.todo:hover .add-hint { opacity: 1; transform: none; }
 
 /* ============================ FAB / footer ============================ */
@@ -364,7 +373,7 @@ function cellHTML([dex,name,type]){
     <div class="photo">
       <span class="dex">№${num}</span>
       <span class="silhouette"><span class="blob"></span></span>
-      <span class="ghost-num">${dex}</span>
+      <img class="poke-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${dex}.png" alt="${name}" loading="lazy">
     </div>
     <div class="meta">
       <div class="nm">${name}</div>
