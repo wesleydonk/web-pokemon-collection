@@ -88,13 +88,63 @@ html[data-theme="dark"] .app-header { background: oklch(0.168 0.012 300 / 0.82);
   border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; }
 
 /* ============================ Filters ============================ */
-.filters { display: flex; gap: 18px; align-items: center; margin-top: 22px; flex-wrap: wrap;
+.filters { display: flex; gap: 10px; align-items: center; margin-top: 22px; flex-wrap: wrap;
   padding-bottom: 22px; border-bottom: 1px solid var(--border); }
-.seg { display: inline-flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 3px; gap: 2px; }
-.seg button { height: 32px; padding: 0 15px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 600;
-  font-family: var(--font-display); color: var(--text-muted); transition: all var(--dur) var(--ease); }
-.seg button.is-active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-xs); }
-.type-filters { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* — Dropdown trigger — */
+.dropdown { position: relative; }
+.drop-trigger {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 36px; padding: 0 13px;
+  border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-xs);
+  font-family: var(--font-display); font-size: 13.5px; font-weight: 500; color: var(--text);
+  cursor: pointer; white-space: nowrap;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.drop-trigger:hover { border-color: var(--border-strong); background: var(--surface-2); }
+.drop-trigger.has-value { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent); }
+.drop-trigger[aria-expanded="true"] { border-color: var(--accent); }
+.drop-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint); }
+.drop-trigger.has-value .drop-label { color: var(--accent); opacity: 0.65; }
+.drop-sep { width: 1px; height: 14px; background: var(--border); flex-shrink: 0; }
+.drop-val { font-weight: 600; }
+.drop-chev { width: 13px; height: 13px; color: var(--text-faint); flex-shrink: 0;
+  transition: transform var(--dur) var(--ease); }
+.drop-trigger[aria-expanded="true"] .drop-chev { transform: rotate(180deg); }
+.drop-trigger.has-value .drop-chev { color: var(--accent); }
+
+/* — Dropdown panel — */
+.drop-panel {
+  position: absolute; top: calc(100% + 7px); left: 0; z-index: 200;
+  min-width: 168px; max-height: 300px; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md); box-shadow: var(--shadow-lg);
+  padding: 4px;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity 130ms var(--ease), transform 130ms var(--ease), visibility 0s 130ms;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+html[data-theme="dark"] .drop-panel { background: var(--surface-2); }
+.drop-panel.is-open {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 130ms var(--ease), transform 130ms var(--ease);
+}
+.drop-opt {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 7px 9px; border-radius: 7px;
+  font-family: var(--font-display); font-size: 13.5px; font-weight: 500;
+  color: var(--text); cursor: pointer; text-align: left; white-space: nowrap;
+  transition: background var(--dur) var(--ease);
+}
+.drop-opt:hover { background: var(--surface-2); }
+html[data-theme="dark"] .drop-opt:hover { background: var(--bg); }
+.drop-opt.is-active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.drop-opt .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.drop-divider { height: 1px; background: var(--border); margin: 4px 2px; }
+
 .filters .count { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); margin-left: auto; }
 
 /* ============================ Grid ============================ */
@@ -302,13 +352,41 @@ html[data-theme="dark"] .cell.todo .add-hint { color: oklch(0.75 0.12 var(--th))
 
   <!-- ===== Filters ===== -->
   <div class="filters">
-    <div class="seg" role="tablist">
-      <button class="is-active" data-f="all">All 151</button>
-      <button data-f="made">Made</button>
-      <button data-f="draft">Drafts</button>
-      <button data-f="todo">To make</button>
+    <div class="filter-group">
+
+      <!-- Status dropdown -->
+      <div class="dropdown" id="statusDrop">
+        <button class="drop-trigger" id="statusTrigger" aria-expanded="false" aria-haspopup="listbox">
+          <span class="drop-label">Status</span>
+          <span class="drop-sep"></span>
+          <span class="drop-val" id="statusVal">All 151</span>
+          <svg class="drop-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="drop-panel" id="statusPanel" role="listbox" aria-label="Filter by status">
+          <button class="drop-opt is-active" data-f="all" data-label="All 151" role="option">All 151</button>
+          <div class="drop-divider"></div>
+          <button class="drop-opt" data-f="made" data-label="Made" role="option">
+            <span class="dot" style="background:var(--good)"></span>Made
+          </button>
+          <button class="drop-opt" data-f="draft" data-label="Drafts" role="option">
+            <span class="dot" style="background:var(--warn)"></span>Drafts
+          </button>
+          <button class="drop-opt" data-f="todo" data-label="To make" role="option">To make</button>
+        </div>
+      </div>
+
+      <!-- Type dropdown -->
+      <div class="dropdown" id="typeDrop">
+        <button class="drop-trigger" id="typeTrigger" aria-expanded="false" aria-haspopup="listbox">
+          <span class="drop-label">Type</span>
+          <span class="drop-sep"></span>
+          <span class="drop-val" id="typeVal">All types</span>
+          <svg class="drop-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="drop-panel" id="typePanel" role="listbox" aria-label="Filter by type"></div>
+      </div>
+
     </div>
-    <div class="type-filters" id="typeFilters"></div>
     <div class="count" id="resultCount">151 shown</div>
   </div>
 
@@ -395,22 +473,75 @@ function render(filterState, filterType){
   document.getElementById('resultCount').textContent = rows.length + ' shown';
 }
 
-/* type filter chips */
+/* — Dropdown filter logic — */
 const types = [...new Set(DEX.map(d=>d[2]))];
 let activeType = null, activeState = 'all';
-const tf = document.getElementById('typeFilters');
-tf.innerHTML = types.map(t=>`<button class="chip" data-type="${t}" style="--th:${TYPE_HUE[t]}"><span class="dot" style="background:oklch(0.62 0.13 ${TYPE_HUE[t]})"></span>${t}</button>`).join('');
-tf.addEventListener('click', e=>{
-  const b = e.target.closest('.chip'); if(!b) return;
-  const t = b.dataset.type;
-  if(activeType===t){ activeType=null; b.classList.remove('is-active'); }
-  else { tf.querySelectorAll('.chip').forEach(c=>c.classList.remove('is-active')); activeType=t; b.classList.add('is-active'); }
+
+/* build type options */
+const typePanel = document.getElementById('typePanel');
+typePanel.innerHTML =
+  '<button class="drop-opt is-active" data-type="" data-label="All types" role="option">All types</button>' +
+  types.map(t=>`<button class="drop-opt" data-type="${t}" data-label="${t}" role="option"><span class="dot" style="background:oklch(0.62 0.13 ${TYPE_HUE[t]})"></span>${t}</button>`).join('');
+
+const statusPanel = document.getElementById('statusPanel');
+const statusTrigger = document.getElementById('statusTrigger');
+const typeTrigger   = document.getElementById('typeTrigger');
+const statusVal     = document.getElementById('statusVal');
+const typeVal       = document.getElementById('typeVal');
+
+function openDrop(panel, trigger) {
+  panel.classList.add('is-open');
+  trigger.setAttribute('aria-expanded', 'true');
+}
+function closeDrop(panel, trigger) {
+  panel.classList.remove('is-open');
+  trigger.setAttribute('aria-expanded', 'false');
+}
+function toggleDrop(panel, trigger, other, otherTrigger) {
+  if(panel.classList.contains('is-open')) { closeDrop(panel, trigger); }
+  else { closeDrop(other, otherTrigger); openDrop(panel, trigger); }
+}
+
+statusTrigger.addEventListener('click', e => {
+  e.stopPropagation();
+  toggleDrop(statusPanel, statusTrigger, typePanel, typeTrigger);
+});
+typeTrigger.addEventListener('click', e => {
+  e.stopPropagation();
+  toggleDrop(typePanel, typeTrigger, statusPanel, statusTrigger);
+});
+
+document.addEventListener('click', () => {
+  closeDrop(statusPanel, statusTrigger);
+  closeDrop(typePanel, typeTrigger);
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
+    closeDrop(statusPanel, statusTrigger);
+    closeDrop(typePanel, typeTrigger);
+  }
+});
+
+statusPanel.addEventListener('click', e => {
+  const b = e.target.closest('.drop-opt'); if(!b) return;
+  statusPanel.querySelectorAll('.drop-opt').forEach(x => x.classList.remove('is-active'));
+  b.classList.add('is-active');
+  activeState = b.dataset.f;
+  statusVal.textContent = b.dataset.label;
+  statusTrigger.classList.toggle('has-value', activeState !== 'all');
+  closeDrop(statusPanel, statusTrigger);
   render(activeState, activeType);
 });
-document.querySelector('.seg').addEventListener('click', e=>{
-  const b = e.target.closest('button'); if(!b) return;
-  document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('is-active'));
-  b.classList.add('is-active'); activeState = b.dataset.f; render(activeState, activeType);
+
+typePanel.addEventListener('click', e => {
+  const b = e.target.closest('.drop-opt'); if(!b) return;
+  typePanel.querySelectorAll('.drop-opt').forEach(x => x.classList.remove('is-active'));
+  b.classList.add('is-active');
+  activeType = b.dataset.type || null;
+  typeVal.textContent = b.dataset.label;
+  typeTrigger.classList.toggle('has-value', activeType !== null);
+  closeDrop(typePanel, typeTrigger);
+  render(activeState, activeType);
 });
 
 render('all', null);
