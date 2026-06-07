@@ -192,6 +192,11 @@ html[data-theme="dark"] .cell.made .ph-tag { color: oklch(0.9 0.06 var(--th)); b
 .cell.made .made-badge { position: absolute; top: 8px; right: 9px; z-index: 3;
   width: 20px; height: 20px; border-radius: 50%; background: var(--good); display: grid; place-items: center; }
 .cell.made .made-badge svg { width: 12px; height: 12px; }
+.cell.made .poke-img {
+  position: absolute; width: 82%; height: auto; z-index: 2;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 14px oklch(0.20 0.10 var(--th) / 0.35));
+}
 
 /* — Draft: a started make, not yet finished — */
 .cell.draft { border-color: var(--accent-line); }
@@ -432,6 +437,7 @@ function cellHTML([dex,name,type]){
     return `<a class="cell made" style="--th:${hue}" data-type="${type}" data-state="made" href="Detail.html">
       <div class="photo">
         <span class="dex" style="color:oklch(0.42 0.1 ${hue})">№${num}</span>
+        <img class="poke-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dex}.png" alt="${name}" loading="lazy">
         <span class="made-badge">${check}</span>
         <span class="ph-tag">photo</span>
       </div>
