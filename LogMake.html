@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log a make — 151 Crochet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+/* ---- shell ---- */
+.app-header { position: sticky; top: 0; z-index: 50; height: var(--header-h); display: flex; align-items: center; gap: 14px;
+  padding: 0 24px; background: oklch(0.991 0.003 300 / 0.85); backdrop-filter: saturate(160%) blur(14px); border-bottom: 1px solid var(--border); }
+html[data-theme="dark"] .app-header { background: oklch(0.168 0.012 300 / 0.85); }
+.app-header .back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 14px; }
+.app-header .back:hover { color: var(--text); }
+.app-header .ttl { font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.app-header .step-of { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+.app-header .spacer { flex: 1; }
+.app-header .acts { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--r-pill); color: var(--text-muted); border: 1px solid transparent; }
+.icon-btn:hover { background: var(--surface-2); color: var(--text); }
+.autosave { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-faint); }
+.autosave .d { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+
+/* ---- layout ---- */
+.page { max-width: 880px; margin: 0 auto; padding: 32px 24px 140px; }
+
+/* creature pick */
+.pick { display: flex; align-items: center; gap: 16px; padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); }
+.pick .thumb { width: 60px; height: 60px; border-radius: 13px; flex-shrink: 0; position: relative;
+  background: linear-gradient(150deg, oklch(0.90 0.055 145), oklch(0.82 0.07 145)); }
+.pick .thumb::after{content:"";position:absolute;inset:0;border-radius:13px;background-image:radial-gradient(oklch(1 0 0 /0.18) 1px,transparent 1.2px);background-size:9px 9px;}
+.pick .who .dx { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+.pick .who h2 { font-size: 22px; font-weight: 600; margin: 2px 0 6px; }
+.pick .who .tags { display: flex; gap: 6px; }
+.pick .change { margin-left: auto; }
+
+/* sections */
+.fsec { margin-top: 28px; }
+.fsec > .sh { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.fsec > .sh .n { width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; flex-shrink: 0; }
+.fsec > .sh h3 { font-size: 18px; font-weight: 600; }
+.fsec > .sh .opt { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); margin-left: auto; }
+.fcard { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: 22px; }
+
+label.lbl { display: block; font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-bottom: 8px; }
+.input { width: 100%; height: 46px; padding: 0 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg); font-size: 15px; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
+textarea.input { height: auto; min-height: 96px; padding: 12px 14px; line-height: 1.55; resize: vertical; }
+select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239b94a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 38px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.field-block + .field-block { margin-top: 16px; }
+
+/* photo dropzone */
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+.photo-slot { aspect-ratio: 1; border-radius: var(--r-md); position: relative; overflow: hidden; }
+.photo-slot.has { background: linear-gradient(150deg, oklch(0.90 0.055 var(--th,145)), oklch(0.82 0.07 var(--th,145))); border: 1px solid var(--border); }
+.photo-slot.has::after{content:"";position:absolute;inset:0;background-image:radial-gradient(oklch(1 0 0 /0.16) 1px,transparent 1.2px);background-size:8px 8px;}
+.photo-slot .cover-tag { position: absolute; top: 7px; left: 7px; z-index:2; font-family: var(--font-mono); font-size: 8.5px; text-transform: uppercase; letter-spacing:0.04em; background: var(--accent); color: var(--accent-contrast); padding: 2px 6px; border-radius: 5px; }
+.photo-slot .rm { position: absolute; top: 6px; right: 6px; z-index:2; width: 22px; height: 22px; border-radius: 50%; background: oklch(0 0 0 / 0.45); color: white; display: grid; place-items: center; }
+.photo-slot.add { border: 1.5px dashed var(--border-strong); display: grid; place-items: center; background: var(--bg-subtle); cursor: pointer; transition: all var(--dur) var(--ease); }
+.photo-slot.add:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.photo-slot.add .inner { text-align: center; color: var(--text-faint); }
+.photo-slot.add:hover .inner { color: var(--accent); }
+.photo-slot.add .inner span { display: block; font-size: 11px; margin-top: 5px; }
+
+/* PDF dropzone (the feature) */
+.dropzone { display: block; border: 1.5px dashed var(--border-strong); border-radius: var(--r-md); background: var(--bg-subtle);
+  padding: 26px; text-align: center; cursor: pointer; transition: all var(--dur) var(--ease); }
+.dropzone:hover, .dropzone.drag { border-color: var(--accent); background: var(--accent-soft); }
+.dropzone .di { width: 44px; height: 44px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border);
+  display: grid; place-items: center; margin: 0 auto 12px; color: var(--accent); }
+.dropzone .dt { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; }
+.dropzone .dt b { color: var(--accent); }
+.dropzone .ds { font-size: 12.5px; color: var(--text-faint); margin-top: 5px; }
+
+/* uploaded PDF card */
+.pdf-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.pdf-list:empty { display: none; }
+.pdf-card { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
+.pdf-card .ficon { width: 42px; height: 52px; border-radius: 7px; flex-shrink: 0; position: relative;
+  background: repeating-linear-gradient(135deg, oklch(0.95 0.01 30) 0 6px, oklch(0.93 0.012 30) 6px 12px);
+  border: 1px solid var(--border); display: grid; place-items: end center; padding-bottom: 6px; }
+html[data-theme="dark"] .pdf-card .ficon { background: repeating-linear-gradient(135deg, oklch(0.30 0.01 30) 0 6px, oklch(0.27 0.012 30) 6px 12px); }
+.pdf-card .ficon .lab { font-family: var(--font-mono); font-size: 8px; font-weight: 700; color: oklch(0.55 0.18 25); background: var(--surface); padding: 1px 4px; border-radius: 3px; letter-spacing: 0.02em; }
+.pdf-card .ficon .corner { position: absolute; top: 0; right: 0; border-width: 0 9px 9px 0; border-style: solid; border-color: var(--bg-subtle) var(--bg-subtle) transparent transparent; }
+html[data-theme="dark"] .pdf-card .ficon .corner { border-color: var(--surface-2) var(--surface-2) transparent transparent; }
+.pdf-card .info { flex: 1; min-width: 0; }
+.pdf-card .info b { font-size: 14px; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pdf-card .info .m { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 3px; display: flex; gap: 10px; }
+.pdf-card .info .m .ok { color: var(--good); display: inline-flex; align-items: center; gap: 4px; }
+.pdf-card .pa { display: flex; gap: 4px; flex-shrink: 0; }
+.pdf-card .pa button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border); display: grid; place-items: center; color: var(--text-muted); transition: all var(--dur) var(--ease); }
+.pdf-card .pa button:hover { border-color: var(--accent-line); color: var(--accent); background: var(--accent-soft); }
+.pdf-card .pa button.del:hover { border-color: oklch(0.7 0.14 25); color: oklch(0.6 0.18 25); background: oklch(0.96 0.03 25); }
+html[data-theme="dark"] .pdf-card .pa button.del:hover { background: oklch(0.3 0.04 25); }
+/* progress (uploading) variant */
+.pdf-card.uploading .bar { height: 4px; border-radius: 3px; background: var(--surface-2); margin-top: 7px; overflow: hidden; }
+.pdf-card.uploading .bar i { display: block; height: 100%; width: 64%; background: var(--accent); border-radius: 3px; }
+
+.divider-or { display: flex; align-items: center; gap: 14px; margin: 16px 0; }
+.divider-or .ln { flex: 1; height: 1px; background: var(--border); }
+.divider-or span { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--text-faint); }
+
+.hint { display: flex; gap: 9px; margin-top: 12px; font-size: 12.5px; color: var(--text-muted); }
+.hint svg { flex-shrink: 0; color: var(--accent); margin-top: 1px; }
+
+/* yarn rows */
+.yarn-row { display: grid; grid-template-columns: 40px 1fr 130px 90px 36px; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
+.yarn-row:first-child { padding-top: 0; }
+.sw-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid oklch(0 0 0 / 0.1); cursor: pointer; }
+.yarn-row .input { height: 42px; }
+.yarn-row .del { width: 34px; height: 34px; border-radius: 9px; color: var(--text-faint); display: grid; place-items: center; }
+.yarn-row .del:hover { color: oklch(0.6 0.18 25); background: oklch(0.96 0.03 25); }
+html[data-theme="dark"] .yarn-row .del:hover { background: oklch(0.3 0.04 25); }
+.add-row { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; font-size: 13.5px; font-weight: 600; color: var(--accent); }
+
+/* color picker */
+.colors { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.colorx { position: relative; }
+.colorx .c { width: 46px; height: 46px; border-radius: 11px; border: 1px solid oklch(0 0 0 / 0.1); cursor: pointer; }
+.colorx .x { position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: grid; place-items: center; color: var(--text-muted); opacity: 0; transition: opacity var(--dur) var(--ease); }
+.colorx:hover .x { opacity: 1; }
+.add-color { width: 46px; height: 46px; border-radius: 11px; border: 1.5px dashed var(--border-strong); display: grid; place-items: center; color: var(--text-faint); cursor: pointer; }
+.add-color:hover { border-color: var(--accent); color: var(--accent); }
+
+/* sticky save bar */
+.savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; border-top: 1px solid var(--border);
+  background: oklch(0.991 0.003 300 / 0.92); backdrop-filter: blur(14px); }
+html[data-theme="dark"] .savebar { background: oklch(0.168 0.012 300 / 0.92); }
+.savebar .inner { max-width: 880px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 14px; }
+.savebar .req { font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 7px; }
+.savebar .req .ok { width: 18px; height: 18px; border-radius: 50%; background: var(--good); display: grid; place-items: center; }
+.savebar .grow { flex: 1; }
+
+@media (max-width: 720px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .yarn-row { grid-template-columns: 36px 1fr 36px; grid-template-areas: "sw name del" "sw weight del" "sw amt del"; gap: 8px 10px; }
+  .yarn-row .y-name { grid-area: name; } .yarn-row .y-weight { grid-area: weight; } .yarn-row .y-amt { grid-area: amt; }
+  .app-header .ttl-wrap { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <a class="back" href="Detail.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="ttl-wrap"><span class="ttl" id="formTitle">Log a make</span></div>
+  <span class="spacer"></span>
+  <div class="acts">
+    <span class="autosave" id="autosave"><span class="d"></span> Draft saved</span>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="page">
+  <!-- creature -->
+  <div class="pick">
+    <div class="thumb" id="pickThumb"></div>
+    <div class="who">
+      <div class="dx" id="pickDex">№001</div>
+      <h2 id="pickName">Bulbasaur</h2>
+      <div class="tags" id="pickTags"><span class="type-tag" style="--th:145">Grass</span><span class="type-tag" style="--th:312">Poison</span></div>
+    </div>
+    <button class="btn btn-ghost btn-sm change">Change</button>
+  </div>
+
+  <!-- 1 · photos -->
+  <section class="fsec">
+    <div class="sh"><span class="n">1</span><h3>Photos</h3><span class="opt">1 required · cover first</span></div>
+    <div class="fcard">
+      <div class="photos" id="photos">
+        <div class="photo-slot has" style="--th:145"><span class="cover-tag">Cover</span><button class="rm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="photo-slot has" style="--th:150"><button class="rm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="photo-slot has" style="--th:160"><button class="rm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <label class="photo-slot add">
+          <input type="file" accept="image/*" multiple hidden>
+          <span class="inner"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin:0 auto"><path d="M12 5v14M5 12h14"/></svg><span>Add photo</span></span>
+        </label>
+      </div>
+      <div class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Drag photos to reorder. The first becomes the cover shown in your collection grid.</div>
+    </div>
+  </section>
+
+  <!-- 2 · pattern + PDF upload -->
+  <section class="fsec">
+    <div class="sh"><span class="n">2</span><h3>Pattern</h3><span class="opt">optional</span></div>
+    <div class="fcard">
+      <div class="grid2">
+        <div class="field-block"><label class="lbl">Pattern name</label><input class="input" id="fPatternName" value="Seed &amp; Sprout Bulbasaur"></div>
+        <div class="field-block"><label class="lbl">Designer</label><input class="input" id="fDesigner" value="Hooked by Nori"></div>
+      </div>
+
+      <div class="field-block" style="margin-top:18px">
+        <label class="lbl">Pattern PDF</label>
+
+        <!-- already-uploaded files -->
+        <div class="pdf-list" id="pdfList">
+          <div class="pdf-card">
+            <div class="ficon"><span class="corner"></span><span class="lab">PDF</span></div>
+            <div class="info">
+              <b>seed-sprout-bulbasaur.pdf</b>
+              <span class="m"><span>1.4 MB</span><span>12 pages</span><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg> Uploaded</span></span>
+            </div>
+            <div class="pa">
+              <button title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+              <button title="Download"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg></button>
+              <button class="del" title="Remove" data-del><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- dropzone -->
+        <label class="dropzone" id="pdfDrop">
+          <input type="file" accept="application/pdf,.pdf" multiple hidden id="pdfInput">
+          <div class="di"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></div>
+          <div class="dt">Drop a PDF here, or <b>browse</b></div>
+          <div class="ds">Pattern, chart, or notes · PDF up to 25 MB · add more than one</div>
+        </label>
+
+        <div class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Your pattern files stay private to your collection — they're never shared or made public.</div>
+
+        <div class="divider-or"><span class="ln"></span><span>or link an online pattern</span><span class="ln"></span></div>
+        <div class="field-block"><input class="input" id="fUrl" placeholder="Ravelry, Etsy, or pattern URL…" value="ravelry.com/patterns/seed-sprout-bulbasaur"></div>
+      </div>
+
+      <div class="grid3" style="margin-top:18px">
+        <div class="field-block"><label class="lbl">Difficulty</label>
+          <select class="input"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+        <div class="field-block"><label class="lbl">Time spent</label><input class="input" value="14 hrs"></div>
+        <div class="field-block"><label class="lbl">Finished height</label><input class="input" value="18 cm"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · yarn & materials -->
+  <section class="fsec">
+    <div class="sh"><span class="n">3</span><h3>Yarn &amp; materials</h3><span class="opt">optional</span></div>
+    <div class="fcard">
+      <div id="yarns">
+        <div class="yarn-row">
+          <button class="sw-btn" style="background:oklch(0.74 0.10 175)"></button>
+          <input class="input y-name" value="Paintbox Simply DK — Seafoam">
+          <input class="input y-weight" value="DK / light worsted">
+          <input class="input y-amt" value="62 g">
+          <button class="del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+        </div>
+        <div class="yarn-row">
+          <button class="sw-btn" style="background:oklch(0.62 0.12 150)"></button>
+          <input class="input y-name" value="Paintbox Simply DK — Grass Green">
+          <input class="input y-weight" value="DK">
+          <input class="input y-amt" value="40 g">
+          <button class="del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+        </div>
+      </div>
+      <button class="add-row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg> Add yarn</button>
+
+      <div class="grid2" style="margin-top:20px;border-top:1px solid var(--border-soft);padding-top:18px">
+        <div class="field-block"><label class="lbl">Hook size</label><input class="input" value="Clover Amour 3.5 mm"></div>
+        <div class="field-block"><label class="lbl">Notions</label><input class="input" value="9 mm safety eyes · polyfil · tapestry needle"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · colors -->
+  <section class="fsec">
+    <div class="sh"><span class="n">4</span><h3>Colors used</h3><span class="opt">optional</span></div>
+    <div class="fcard">
+      <label class="lbl">Tap a swatch to rename · add from palette or sample a photo</label>
+      <div class="colors">
+        <div class="colorx"><div class="c" style="background:oklch(0.74 0.10 175)"></div><span class="x"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+        <div class="colorx"><div class="c" style="background:oklch(0.62 0.12 150)"></div><span class="x"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+        <div class="colorx"><div class="c" style="background:oklch(0.45 0.10 150)"></div><span class="x"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+        <div class="colorx"><div class="c" style="background:oklch(0.94 0.03 95)"></div><span class="x"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+        <div class="colorx"><div class="c" style="background:oklch(0.28 0.02 290)"></div><span class="x"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+        <div class="add-color"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · story -->
+  <section class="fsec">
+    <div class="sh"><span class="n">5</span><h3>Story &amp; notes</h3><span class="opt">optional</span></div>
+    <div class="fcard">
+      <div class="field-block"><label class="lbl">The story behind this make</label>
+        <textarea class="input" id="fStory" placeholder="What was tricky, what you'd do differently, why this one…">The bulb was the fiddly part — I frogged the increase rounds twice before the shaping sat right. Worked body &amp; bulb separately and seamed at the end.</textarea></div>
+    </div>
+  </section>
+</main>
+
+<!-- sticky save -->
+<div class="savebar">
+  <div class="inner">
+    <span class="req" id="saveReq"><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Ready to save — creature &amp; cover photo added</span>
+    <span class="grow"></span>
+    <button class="btn btn-ghost">Save draft</button>
+    <button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg> Mark as made</button>
+  </div>
+</div>
+
+<script>
+const root = document.documentElement;
+const saved = localStorage.getItem('theme151'); if(saved) root.dataset.theme = saved;
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  const next = root.dataset.theme==='dark' ? 'light' : 'dark';
+  root.dataset.theme = next; localStorage.setItem('theme151', next);
+});
+
+/* ---- PDF upload behaviour (mockup-real) ---- */
+const drop = document.getElementById('pdfDrop');
+const input = document.getElementById('pdfInput');
+const list = document.getElementById('pdfList');
+
+function fmtSize(b){ return b > 1048576 ? (b/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(b/1024))+' KB'; }
+
+function addPdf(file){
+  const card = document.createElement('div');
+  card.className = 'pdf-card uploading';
+  card.innerHTML = `
+    <div class="ficon"><span class="corner"></span><span class="lab">PDF</span></div>
+    <div class="info">
+      <b>${file.name}</b>
+      <span class="m"><span>${fmtSize(file.size)}</span><span>Uploading…</span></span>
+      <div class="bar"><i></i></div>
+    </div>
+    <div class="pa">
+      <button class="del" data-del title="Cancel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>`;
+  list.appendChild(card);
+  // simulate finishing the upload
+  setTimeout(()=>{
+    card.classList.remove('uploading');
+    const pages = 4 + Math.floor(Math.random()*16);
+    card.querySelector('.info .m').innerHTML = `<span>${fmtSize(file.size)}</span><span>${pages} pages</span><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg> Uploaded</span>`;
+    const bar = card.querySelector('.bar'); if(bar) bar.remove();
+    card.querySelector('.pa').innerHTML = `
+      <button title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button title="Download"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg></button>
+      <button class="del" data-del title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`;
+  }, 1100);
+}
+
+function handleFiles(files){
+  [...files].forEach(f=>{ if(f.type==='application/pdf' || /\.pdf$/i.test(f.name)) addPdf(f); });
+}
+input.addEventListener('change', e=> handleFiles(e.target.files));
+['dragover','dragenter'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
+drop.addEventListener('drop', e=> handleFiles(e.dataTransfer.files));
+
+/* remove */
+list.addEventListener('click', e=>{ const b = e.target.closest('[data-del]'); if(b){ e.preventDefault(); b.closest('.pdf-card').remove(); } });
+
+/* yarn add/remove */
+document.querySelector('.add-row').addEventListener('click', ()=>{
+  const row = document.createElement('div');
+  row.className = 'yarn-row';
+  row.innerHTML = `<button class="sw-btn" style="background:oklch(0.8 0.04 300)"></button>
+    <input class="input y-name" placeholder="Yarn brand &amp; colorway">
+    <input class="input y-weight" placeholder="Weight">
+    <input class="input y-amt" placeholder="Amount">
+    <button class="del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`;
+  document.getElementById('yarns').appendChild(row);
+});
+document.getElementById('yarns').addEventListener('click', e=>{ if(e.target.closest('.del')) e.target.closest('.yarn-row').remove(); });
+document.querySelector('.colors').addEventListener('click', e=>{ if(e.target.closest('.x')) e.target.closest('.colorx').remove(); });
+
+/* ---- entry-point modes: ?dex= & new=1 / draft=1 (from the collection grid) ---- */
+const DEX = [[1,"Bulbasaur","Grass"],[2,"Ivysaur","Grass"],[3,"Venusaur","Grass"],[4,"Charmander","Fire"],[5,"Charmeleon","Fire"],[6,"Charizard","Fire"],[7,"Squirtle","Water"],[8,"Wartortle","Water"],[9,"Blastoise","Water"],[10,"Caterpie","Bug"],[11,"Metapod","Bug"],[12,"Butterfree","Bug"],[13,"Weedle","Bug"],[14,"Kakuna","Bug"],[15,"Beedrill","Bug"],[16,"Pidgey","Normal"],[17,"Pidgeotto","Normal"],[18,"Pidgeot","Normal"],[19,"Rattata","Normal"],[20,"Raticate","Normal"],[21,"Spearow","Normal"],[22,"Fearow","Normal"],[23,"Ekans","Poison"],[24,"Arbok","Poison"],[25,"Pikachu","Electric"],[26,"Raichu","Electric"],[27,"Sandshrew","Ground"],[28,"Sandslash","Ground"],[29,"Nidoran♀","Poison"],[30,"Nidorina","Poison"],[31,"Nidoqueen","Poison"],[32,"Nidoran♂","Poison"],[33,"Nidorino","Poison"],[34,"Nidoking","Poison"],[35,"Clefairy","Fairy"],[36,"Clefable","Fairy"],[37,"Vulpix","Fire"],[38,"Ninetales","Fire"],[39,"Jigglypuff","Normal"],[40,"Wigglytuff","Normal"],[41,"Zubat","Poison"],[42,"Golbat","Poison"],[43,"Oddish","Grass"],[44,"Gloom","Grass"],[45,"Vileplume","Grass"],[46,"Paras","Bug"],[47,"Parasect","Bug"],[48,"Venonat","Bug"],[49,"Venomoth","Bug"],[50,"Diglett","Ground"],[51,"Dugtrio","Ground"],[52,"Meowth","Normal"],[53,"Persian","Normal"],[54,"Psyduck","Water"],[55,"Golduck","Water"],[56,"Mankey","Fighting"],[57,"Primeape","Fighting"],[58,"Growlithe","Fire"],[59,"Arcanine","Fire"],[60,"Poliwag","Water"],[61,"Poliwhirl","Water"],[62,"Poliwrath","Water"],[63,"Abra","Psychic"],[64,"Kadabra","Psychic"],[65,"Alakazam","Psychic"],[66,"Machop","Fighting"],[67,"Machoke","Fighting"],[68,"Machamp","Fighting"],[69,"Bellsprout","Grass"],[70,"Weepinbell","Grass"],[71,"Victreebel","Grass"],[72,"Tentacool","Water"],[73,"Tentacruel","Water"],[74,"Geodude","Rock"],[75,"Graveler","Rock"],[76,"Golem","Rock"],[77,"Ponyta","Fire"],[78,"Rapidash","Fire"],[79,"Slowpoke","Water"],[80,"Slowbro","Water"],[81,"Magnemite","Electric"],[82,"Magneton","Electric"],[83,"Farfetch'd","Normal"],[84,"Doduo","Normal"],[85,"Dodrio","Normal"],[86,"Seel","Water"],[87,"Dewgong","Water"],[88,"Grimer","Poison"],[89,"Muk","Poison"],[90,"Shellder","Water"],[91,"Cloyster","Water"],[92,"Gastly","Ghost"],[93,"Haunter","Ghost"],[94,"Gengar","Ghost"],[95,"Onix","Rock"],[96,"Drowzee","Psychic"],[97,"Hypno","Psychic"],[98,"Krabby","Water"],[99,"Kingler","Water"],[100,"Voltorb","Electric"],[101,"Electrode","Electric"],[102,"Exeggcute","Grass"],[103,"Exeggutor","Grass"],[104,"Cubone","Ground"],[105,"Marowak","Ground"],[106,"Hitmonlee","Fighting"],[107,"Hitmonchan","Fighting"],[108,"Lickitung","Normal"],[109,"Koffing","Poison"],[110,"Weezing","Poison"],[111,"Rhyhorn","Ground"],[112,"Rhydon","Ground"],[113,"Chansey","Normal"],[114,"Tangela","Grass"],[115,"Kangaskhan","Normal"],[116,"Horsea","Water"],[117,"Seadra","Water"],[118,"Goldeen","Water"],[119,"Seaking","Water"],[120,"Staryu","Water"],[121,"Starmie","Water"],[122,"Mr. Mime","Psychic"],[123,"Scyther","Bug"],[124,"Jynx","Ice"],[125,"Electabuzz","Electric"],[126,"Magmar","Fire"],[127,"Pinsir","Bug"],[128,"Tauros","Normal"],[129,"Magikarp","Water"],[130,"Gyarados","Water"],[131,"Lapras","Water"],[132,"Ditto","Normal"],[133,"Eevee","Normal"],[134,"Vaporeon","Water"],[135,"Jolteon","Electric"],[136,"Flareon","Fire"],[137,"Porygon","Normal"],[138,"Omanyte","Rock"],[139,"Omastar","Rock"],[140,"Kabuto","Rock"],[141,"Kabutops","Rock"],[142,"Aerodactyl","Rock"],[143,"Snorlax","Normal"],[144,"Articuno","Ice"],[145,"Zapdos","Electric"],[146,"Moltres","Fire"],[147,"Dratini","Dragon"],[148,"Dragonair","Dragon"],[149,"Dragonite","Dragon"],[150,"Mewtwo","Psychic"],[151,"Mew","Psychic"]];
+const TYPE_HUE = {Grass:145,Fire:42,Water:255,Bug:120,Normal:80,Poison:312,Electric:100,Ground:70,Fairy:350,Fighting:30,Psychic:355,Rock:85,Ghost:295,Ice:215,Dragon:275,Steel:250,Flying:235,Dark:35};
+(function initMode(){
+  const q = new URLSearchParams(location.search);
+  const dex = parseInt(q.get('dex'),10);
+  const mode = q.get('new') ? 'new' : (q.get('draft') ? 'draft' : 'edit');
+  const row = DEX.find(r=> r[0]===dex);
+
+  // set creature identity
+  if(row){
+    const name = row[1], type = row[2], hue = TYPE_HUE[type] ?? 300;
+    document.getElementById('pickName').textContent = name;
+    document.getElementById('pickDex').textContent = '№' + String(dex).padStart(3,'0');
+    document.getElementById('pickTags').innerHTML = `<span class="type-tag" style="--th:${hue}">${type}</span>`;
+    document.getElementById('pickThumb').style.background = `linear-gradient(150deg, oklch(0.90 0.055 ${hue}), oklch(0.82 0.07 ${hue}))`;
+    document.querySelectorAll('#photos .photo-slot.has').forEach(s=> s.style.setProperty('--th', hue));
+  }
+
+  const clearInputs = ()=>{
+    ['fPatternName','fDesigner','fUrl','fStory'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    document.querySelectorAll('.yarn-row .input').forEach(i=> i.value='');
+    document.querySelectorAll('#yarns .yarn-row').forEach((r,i)=>{ if(i>0) r.remove(); });
+    document.querySelector('select.input').selectedIndex = 1;
+    document.querySelectorAll('.grid3 .input').forEach(i=>{ if(i.tagName==='INPUT') i.value=''; });
+  };
+  const clearPdfs = ()=> { document.getElementById('pdfList').innerHTML=''; };
+  const emptyPhotos = ()=> document.querySelectorAll('#photos .photo-slot.has').forEach(s=> s.remove());
+
+  if(mode==='new'){
+    document.getElementById('formTitle').textContent = 'Log a make';
+    document.getElementById('autosave').style.display = 'none';
+    emptyPhotos(); clearPdfs(); clearInputs();
+    const req = document.getElementById('saveReq');
+    req.innerHTML = '<span class="ok" style="background:var(--text-faint)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></span> Add a cover photo to save';
+    document.querySelector('.savebar .btn-primary').style.opacity = '0.5';
+    document.querySelector('.savebar .btn-primary').style.pointerEvents = 'none';
+  } else if(mode==='draft'){
+    document.getElementById('formTitle').textContent = 'Continue draft';
+    // a draft is partway done: keep the cover photo, clear the deeper specs
+    document.querySelectorAll('#photos .photo-slot.has').forEach((s,i)=>{ if(i>0) s.remove(); });
+    clearPdfs(); clearInputs();
+  }
+})();
+</script>
+</body>
+</html>

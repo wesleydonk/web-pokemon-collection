@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design variations — 151 Crochet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  body { background: var(--bg); }
+  /* ---- shared mini-cell vocab for variation frames ---- */
+  .vb { padding: 18px; background: var(--surface); height: 100%; }
+  .vtitle { font-family: var(--font-display); font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .vnote { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .sel { display:inline-flex; align-items:center; gap:5px; height:20px; padding:0 8px; border-radius:999px;
+    background: var(--good-soft); color: var(--good); font-family: var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px; }
+
+  /* A — rounded card */
+  .g-round { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .rc { border-radius:14px; overflow:hidden; border:1px solid var(--border); background:var(--surface); }
+  .rc .ph { aspect-ratio:1; position:relative; }
+  .rc.made .ph { background:linear-gradient(150deg, oklch(0.90 0.055 var(--th)), oklch(0.83 0.07 var(--th))); }
+  .rc.made .ph::after{content:"";position:absolute;inset:0;background-image:radial-gradient(oklch(1 0 0 /0.16) 1px,transparent 1.2px);background-size:8px 8px;}
+  .rc.todo { border-style:dashed; border-color:var(--border-strong); background:var(--bg-subtle); }
+  .rc.todo .ph { display:grid; place-items:center; }
+  .rc.todo .gn { font-family:var(--font-display); font-weight:700; font-size:30px; color:var(--text-ghost); }
+  .rc .dx { position:absolute; top:7px; left:8px; font-family:var(--font-mono); font-size:9px; color:var(--text-faint); }
+  .rc .mt { padding:8px 9px 9px; font-family:var(--font-display); font-weight:600; font-size:12px; }
+  .rc.todo .mt { color:var(--text-faint); }
+  .ck { position:absolute; top:6px; right:7px; width:16px; height:16px; border-radius:50%; background:var(--good); display:grid; place-items:center; }
+  .ck svg{width:10px;height:10px;}
+
+  /* B — circular medallion */
+  .g-circ { display:grid; grid-template-columns:1fr 1fr; gap:14px 10px; }
+  .cc { text-align:center; }
+  .cc .med { width:78px; height:78px; border-radius:50%; margin:0 auto; position:relative; }
+  .cc.made .med { background:linear-gradient(150deg, oklch(0.90 0.055 var(--th)), oklch(0.82 0.07 var(--th))); border:1px solid var(--border); }
+  .cc.made .med::after{content:"";position:absolute;inset:0;border-radius:50%;background-image:radial-gradient(oklch(1 0 0 /0.16) 1px,transparent 1.2px);background-size:8px 8px;}
+  .cc.todo .med { border:2px dashed var(--border-strong); display:grid; place-items:center; }
+  .cc.todo .med .gn { font-family:var(--font-display); font-weight:700; font-size:24px; color:var(--text-ghost); }
+  .cc .nm { font-family:var(--font-display); font-weight:600; font-size:12px; margin-top:8px; }
+  .cc.todo .nm { color:var(--text-faint); }
+  .cc .dx { font-family:var(--font-mono); font-size:9px; color:var(--text-faint); }
+  .cc.made .med .ck { top:2px; right:4px; }
+
+  /* C — contact sheet */
+  .g-sheet { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+  .sc { aspect-ratio:1; position:relative; }
+  .sc.made { background:linear-gradient(150deg, oklch(0.88 0.06 var(--th)), oklch(0.80 0.075 var(--th))); }
+  .sc.made::after{content:"";position:absolute;inset:0;background-image:radial-gradient(oklch(1 0 0 /0.16) 1px,transparent 1.2px);background-size:7px 7px;}
+  .sc.todo { background:var(--bg-subtle); display:grid; place-items:center; }
+  .sc.todo .gn { font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--text-ghost); }
+  .sc .dx { position:absolute; bottom:4px; left:5px; font-family:var(--font-mono); font-size:8px; z-index:2;
+    color:oklch(0.35 0.08 var(--th)); }
+  .sc.todo .dx { color:var(--text-faint); }
+
+  /* grid-layout frames */
+  .lay-head { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .lay-head .field-mini { flex:1; height:26px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border); display:flex; align-items:center; padding:0 10px; font-size:10px; color:var(--text-faint); }
+  .lay-head .pill { height:22px; padding:0 9px; border-radius:999px; background:var(--accent); color:var(--accent-contrast); font-size:9px; display:grid; place-items:center; font-family:var(--font-mono); }
+  .type-head { font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-faint); margin:12px 0 8px; display:flex; align-items:center; gap:8px; }
+  .type-head .ln { flex:1; height:1px; background:var(--border); }
+  .g-dense { display:grid; grid-template-columns:repeat(6,1fr); gap:5px; }
+
+  /* detail-layout frames */
+  .dl { font-size:11px; }
+  .dl .bar { height:26px; border-bottom:1px solid var(--border); margin:-18px -18px 14px; display:flex; align-items:center; padding:0 14px; gap:8px; }
+  .dl .bar .b { width:18px; height:18px; border-radius:6px; background:var(--accent-soft); }
+  .dl .bar .t { font-family:var(--font-display); font-weight:700; font-size:11px; }
+  .dl-split { display:grid; grid-template-columns:1.1fr 1fr; gap:12px; }
+  .dl-hero { aspect-ratio:1; border-radius:10px; background:linear-gradient(150deg, oklch(0.90 0.055 145), oklch(0.82 0.07 145)); position:relative; }
+  .dl-hero.wide { aspect-ratio:16/7; }
+  .dl-hero::after{content:"";position:absolute;inset:0;border-radius:inherit;background-image:radial-gradient(oklch(1 0 0 /0.16) 1px,transparent 1.2px);background-size:9px 9px;}
+  .dl-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-top:6px; }
+  .dl-thumbs span { aspect-ratio:1; border-radius:5px; background:var(--surface-2); border:1px solid var(--border); }
+  .dl h4 { font-family:var(--font-display); font-size:17px; font-weight:600; margin:2px 0 4px; }
+  .dl .tt { display:inline-flex; height:16px; padding:0 7px; border-radius:999px; background:oklch(0.94 0.05 145); color:oklch(0.42 0.1 145); font-size:9px; align-items:center; font-weight:600; }
+  .dl .card-mini { border:1px solid var(--border); border-radius:9px; padding:9px; margin-top:8px; }
+  .dl .card-mini .h { font-family:var(--font-mono); font-size:8px; text-transform:uppercase; color:var(--text-faint); letter-spacing:0.05em; margin-bottom:6px; }
+  .dl .rowln { height:6px; border-radius:3px; background:var(--surface-2); margin-bottom:5px; }
+  .dl .rowln.s { width:60%; } .dl .rowln.m { width:80%; }
+  .dl .sw-row { display:flex; gap:4px; }
+  .dl .sw-row span { width:20px; height:20px; border-radius:5px; }
+  .dl .stat3 { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+  .dl .stat3 div { padding:7px 8px; border-right:1px solid var(--border); }
+  .dl .stat3 div:last-child{border-right:0;}
+  .dl .stat3 .v { font-family:var(--font-display); font-weight:600; font-size:13px; }
+  .dl .stat3 .k { font-family:var(--font-mono); font-size:7px; color:var(--text-faint); text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+const CK = <span className="ck"><svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 13l4 4L19 7"/></svg></span>;
+const SAMP = [['001','Bulbasaur',145,true],['004','Charmander',42,false],['007','Squirtle',255,true],['025','Pikachu',100,false],['133','Eevee',80,true],['039','Jigglypuff',350,false]];
+
+function Sel({children}){ return <span className="sel">★ {children}</span>; }
+
+/* ---- card-style variations ---- */
+function CardRound(){ return (
+  <div className="vb">
+    <Sel>Selected</Sel>
+    <div className="vtitle">A · Rounded card</div>
+    <div className="vnote">Photo tile, name + maker below. Dashed faint slot for to-make. Calm, scannable.</div>
+    <div className="g-round">
+      {SAMP.slice(0,4).map(([d,n,h,m])=>(
+        <div key={d} className={"rc "+(m?"made":"todo")} style={{"--th":h}}>
+          <div className="ph"><span className="dx">№{d}</span>{m?CK:<span className="gn">{+d}</span>}</div>
+          <div className="mt">{n}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+); }
+function CardCirc(){ return (
+  <div className="vb">
+    <div className="vtitle">B · Circular medallion</div>
+    <div className="vnote">Round photo badges, centered names. Softer, more "trophy shelf" — reads less like a database.</div>
+    <div className="g-circ">
+      {SAMP.slice(0,4).map(([d,n,h,m])=>(
+        <div key={d} className={"cc "+(m?"made":"todo")} style={{"--th":h}}>
+          <div className="med">{m?CK:<span className="gn">{+d}</span>}</div>
+          <div className="nm">{n}</div><div className="dx">№{d}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+); }
+function CardSheet(){ return (
+  <div className="vb">
+    <div className="vtitle">C · Contact sheet</div>
+    <div className="vnote">Edge-to-edge photos, number overlay only, name on hover. Densest — best for showing all 151 at once.</div>
+    <div className="g-sheet">
+      {SAMP.map(([d,n,h,m])=>(
+        <div key={d} className={"sc "+(m?"made":"todo")} style={{"--th":h}}>
+          <span className="dx">№{d}</span>{!m&&<span className="gn">{+d}</span>}
+        </div>
+      ))}
+      {SAMP.slice(0,3).map(([d,n,h,m])=>(
+        <div key={d+'x'} className={"sc "+(!m?"made":"todo")} style={{"--th":h}}>
+          <span className="dx">№{d}</span>{m&&<span className="gn">{+d}</span>}
+        </div>
+      ))}
+    </div>
+  </div>
+); }
+
+/* ---- grid-layout variations ---- */
+function LayUniform(){ return (
+  <div className="vb">
+    <Sel>Selected</Sel>
+    <div className="vtitle">A · Uniform card grid</div>
+    <div className="vnote">Auto-fill cards, progress + search up top. Familiar, breathable, responsive 2→8 cols.</div>
+    <div className="lay-head"><span className="field-mini">Search the 151…</span><span className="pill">26/151</span></div>
+    <div className="g-round" style={{gridTemplateColumns:'repeat(4,1fr)'}}>
+      {[...SAMP,...SAMP].slice(0,8).map(([d,n,h,m],i)=>(
+        <div key={i} className={"rc "+(m?"made":"todo")} style={{"--th":h}}>
+          <div className="ph"><span className="dx">№{d}</span>{m?CK:<span className="gn" style={{fontSize:22}}>{+d}</span>}</div>
+          <div className="mt" style={{fontSize:10}}>{n}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+); }
+function LayDense(){ return (
+  <div className="vb">
+    <div className="vtitle">B · Dense gallery</div>
+    <div className="vnote">Tighter contact-sheet wall — see the whole dex without scrolling much. Names on hover, filters in a side rail.</div>
+    <div className="lay-head"><span className="field-mini">Filter…</span><span className="pill">26/151</span></div>
+    <div className="g-dense">
+      {Array.from({length:24}).map((_,i)=>{ const s=SAMP[i%SAMP.length]; const m=(i*7)%3===0;
+        return <div key={i} className={"sc "+(m?"made":"todo")} style={{"--th":s[2]}}><span className="dx">№{String(i+1).padStart(3,'0')}</span>{!m&&<span className="gn" style={{fontSize:14}}>{i+1}</span>}</div>; })}
+    </div>
+  </div>
+); }
+function LayType(){ return (
+  <div className="vb">
+    <div className="vtitle">C · Grouped by type</div>
+    <div className="vnote">Sections per type with their own progress. Turns the dex into themed shelves — great for type completionists.</div>
+    <div className="type-head">Grass · 2/12 <span className="ln"></span></div>
+    <div className="g-round" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
+      {[145,145,145,145,145].map((h,i)=>(<div key={i} className={"rc "+(i<2?"made":"todo")} style={{"--th":h}}><div className="ph">{i<2?CK:<span className="gn" style={{fontSize:16}}>·</span>}</div></div>))}
+    </div>
+    <div className="type-head">Fire · 1/12 <span className="ln"></span></div>
+    <div className="g-round" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
+      {[42,42,42,42,42].map((h,i)=>(<div key={i} className={"rc "+(i<1?"made":"todo")} style={{"--th":h}}><div className="ph">{i<1?CK:<span className="gn" style={{fontSize:16}}>·</span>}</div></div>))}
+    </div>
+  </div>
+); }
+
+/* ---- detail-layout variations ---- */
+function DetSplit(){ return (
+  <div className="vb dl">
+    <div className="bar"><span className="b"></span><span className="t">Bulbasaur</span></div>
+    <Sel>Selected</Sel>
+    <div className="dl-split">
+      <div>
+        <div className="dl-hero"></div>
+        <div className="dl-thumbs"><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div>
+        <span className="tt">Grass</span>
+        <h4>Bulbasaur</h4>
+        <div className="card-mini"><div className="h">Maker</div><div className="rowln m"></div><div className="rowln s"></div></div>
+        <div className="card-mini"><div className="h">Yarn</div><div className="sw-row"><span style={{background:'oklch(0.74 0.1 175)'}}></span><span style={{background:'oklch(0.62 0.12 150)'}}></span><span style={{background:'oklch(0.94 0.03 95)'}}></span></div></div>
+      </div>
+    </div>
+    <div className="vtitle" style={{marginTop:12}}>A · Split, sticky gallery</div>
+    <div className="vnote">Gallery pinned left, scrollable spec cards right. Specs always in view — info-first.</div>
+  </div>
+); }
+function DetHero(){ return (
+  <div className="vb dl">
+    <div className="bar"><span className="b"></span><span className="t">Bulbasaur</span></div>
+    <div className="dl-hero wide"></div>
+    <div className="dl-thumbs" style={{gridTemplateColumns:'repeat(5,1fr)',marginTop:6}}><span></span><span></span><span></span><span></span><span></span></div>
+    <h4 style={{marginTop:10}}>Bulbasaur <span className="tt">Grass</span></h4>
+    <div className="stat3" style={{marginTop:8}}>
+      <div><div className="v">14h</div><div className="k">Time</div></div>
+      <div><div className="v">Int.</div><div className="k">Level</div></div>
+      <div><div className="v">18cm</div><div className="k">Height</div></div>
+    </div>
+    <div className="card-mini"><div className="h">Pattern · Yarn · Story</div><div className="rowln m"></div><div className="rowln s"></div></div>
+    <div className="vtitle" style={{marginTop:10}}>B · Full-bleed hero</div>
+    <div className="vnote">Big finished photo leads, stats bar beneath, specs in a two-column flow. Photo-first / showy.</div>
+  </div>
+); }
+function DetMag(){ return (
+  <div className="vb dl" style={{textAlign:'center'}}>
+    <div className="bar"><span className="b"></span><span className="t">Bulbasaur</span></div>
+    <span className="tt">№001 · Grass</span>
+    <h4 style={{fontSize:20, margin:'6px 0'}}>Bulbasaur</h4>
+    <div className="dl-hero" style={{maxWidth:170, margin:'8px auto 0', aspectRatio:'1'}}></div>
+    <div style={{maxWidth:200, margin:'12px auto 0', textAlign:'left'}}>
+      <div className="card-mini" style={{marginTop:0}}><div className="h">The story</div><div className="rowln m"></div><div className="rowln m"></div><div className="rowln s"></div></div>
+      <div className="card-mini"><div className="h">Yarn &amp; colors</div><div className="sw-row"><span style={{background:'oklch(0.74 0.1 175)'}}></span><span style={{background:'oklch(0.62 0.12 150)'}}></span><span style={{background:'oklch(0.45 0.1 150)'}}></span><span style={{background:'oklch(0.94 0.03 95)'}}></span></div></div>
+    </div>
+    <div className="vtitle" style={{marginTop:12}}>C · Single-column journal</div>
+    <div className="vnote">Narrow centered column, hero + story + specs stacked. Reads like a maker's journal entry.</div>
+  </div>
+); }
+
+function App(){
+  return (
+    <DesignCanvas>
+      <DCSection id="cards" title="Card &amp; collected / uncollected style" subtitle="How each creature appears — and how 'still to make' reads vs. 'made'.">
+        <DCArtboard id="c-a" label="A · Rounded card" width={300} height={448}><CardRound/></DCArtboard>
+        <DCArtboard id="c-b" label="B · Circular medallion" width={300} height={448}><CardCirc/></DCArtboard>
+        <DCArtboard id="c-c" label="C · Contact sheet" width={300} height={448}><CardSheet/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="grid" title="Collection grid layout" subtitle="The landing view: search + the 151 as a grid.">
+        <DCArtboard id="g-a" label="A · Uniform card grid" width={420} height={400}><LayUniform/></DCArtboard>
+        <DCArtboard id="g-b" label="B · Dense gallery" width={420} height={400}><LayDense/></DCArtboard>
+        <DCArtboard id="g-c" label="C · Grouped by type" width={420} height={400}><LayType/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="detail" title="Creature detail layout" subtitle="Pattern, materials, maker story, and the photo gallery.">
+        <DCArtboard id="d-a" label="A · Split, sticky gallery" width={420} height={500}><DetSplit/></DCArtboard>
+        <DCArtboard id="d-b" label="B · Full-bleed hero" width={420} height={500}><DetHero/></DCArtboard>
+        <DCArtboard id="d-c" label="C · Single-column journal" width={420} height={500}><DetMag/></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

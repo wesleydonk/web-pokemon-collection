@@ -1,0 +1,264 @@
+/* ============================================================================
+   151 Crochet Collection — Design Tokens & Base System
+   ----------------------------------------------------------------------------
+   Aesthetic: clean & editorial. Crisp warm-neutral surfaces, generous
+   whitespace, soft-violet accent. Geometric sans throughout.
+   Light is default; add data-theme="dark" on <html> for dark mode.
+   All color in oklch so light/dark stay perceptually matched.
+   ============================================================================ */
+
+/* ----- Fonts (loaded via <link> in each page head) -------------------------
+   Display / UI : "Space Grotesk"
+   Body         : "Manrope"
+   Spec / meta  : "Space Mono"
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* — Neutral surfaces (warm, faint violet undertone, chroma <= 0.006) — */
+  --bg:          oklch(0.991 0.003 300);
+  --bg-subtle:   oklch(0.974 0.004 300);
+  --surface:     oklch(1    0     0);
+  --surface-2:   oklch(0.972 0.004 300);
+  --border:      oklch(0.912 0.005 300);
+  --border-soft: oklch(0.945 0.004 300);
+  --border-strong: oklch(0.855 0.006 300);
+
+  /* — Text — */
+  --text:        oklch(0.225 0.012 300);
+  --text-muted:  oklch(0.488 0.011 300);
+  --text-faint:  oklch(0.672 0.009 300);
+  --text-ghost:  oklch(0.80  0.006 300);
+
+  /* — Accent: soft violet — */
+  --accent:         oklch(0.560 0.160 300);
+  --accent-hover:   oklch(0.498 0.172 300);
+  --accent-press:   oklch(0.452 0.175 300);
+  --accent-soft:    oklch(0.952 0.030 300);
+  --accent-soft-2:  oklch(0.918 0.045 300);
+  --accent-line:    oklch(0.840 0.070 300);
+  --accent-contrast: oklch(0.99 0.005 300);
+
+  /* — Functional — */
+  --good:      oklch(0.62 0.13 150);
+  --good-soft: oklch(0.95 0.03 150);
+  --warn:      oklch(0.70 0.12 70);
+
+  /* — Radius — */
+  --r-xs:   7px;
+  --r-sm:   11px;
+  --r-md:   16px;
+  --r-lg:   22px;
+  --r-xl:   30px;
+  --r-pill: 999px;
+
+  /* — Shadow (soft, editorial; barely-there) — */
+  --shadow-xs: 0 1px 2px oklch(0.3 0.02 300 / 0.05);
+  --shadow-sm: 0 2px 8px oklch(0.3 0.02 300 / 0.06), 0 1px 2px oklch(0.3 0.02 300 / 0.04);
+  --shadow-md: 0 8px 28px oklch(0.3 0.03 300 / 0.10), 0 2px 6px oklch(0.3 0.02 300 / 0.05);
+  --shadow-lg: 0 24px 60px oklch(0.25 0.04 300 / 0.16), 0 6px 16px oklch(0.3 0.02 300 / 0.07);
+  --ring: 0 0 0 3px oklch(0.560 0.160 300 / 0.28);
+
+  /* — Typography — */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Manrope", system-ui, sans-serif;
+  --font-mono:    "Space Mono", ui-monospace, monospace;
+
+  /* — Spacing scale — */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px;
+
+  /* — Layout — */
+  --maxw: 1240px;
+  --header-h: 68px;
+
+  /* — Motion — */
+  --ease:     cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 0.22s;
+}
+
+html[data-theme="dark"] {
+  --bg:          oklch(0.168 0.012 300);
+  --bg-subtle:   oklch(0.198 0.012 300);
+  --surface:     oklch(0.214 0.013 300);
+  --surface-2:   oklch(0.250 0.014 300);
+  --border:      oklch(0.305 0.013 300);
+  --border-soft: oklch(0.262 0.012 300);
+  --border-strong: oklch(0.392 0.014 300);
+
+  --text:        oklch(0.952 0.005 300);
+  --text-muted:  oklch(0.715 0.012 300);
+  --text-faint:  oklch(0.535 0.012 300);
+  --text-ghost:  oklch(0.40  0.012 300);
+
+  --accent:         oklch(0.730 0.150 300);
+  --accent-hover:   oklch(0.788 0.140 300);
+  --accent-press:   oklch(0.820 0.130 300);
+  --accent-soft:    oklch(0.282 0.052 300);
+  --accent-soft-2:  oklch(0.330 0.065 300);
+  --accent-line:    oklch(0.430 0.085 300);
+  --accent-contrast: oklch(0.165 0.02 300);
+
+  --good:      oklch(0.74 0.13 150);
+  --good-soft: oklch(0.30 0.05 150);
+
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.30);
+  --shadow-sm: 0 2px 8px oklch(0 0 0 / 0.34), 0 1px 2px oklch(0 0 0 / 0.28);
+  --shadow-md: 0 8px 28px oklch(0 0 0 / 0.44), 0 2px 6px oklch(0 0 0 / 0.30);
+  --shadow-lg: 0 24px 60px oklch(0 0 0 / 0.55), 0 6px 16px oklch(0 0 0 / 0.34);
+  --ring: 0 0 0 3px oklch(0.730 0.150 300 / 0.34);
+}
+
+/* ============================================================================
+   Base
+   ============================================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv01";
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+::selection { background: var(--accent-soft-2); color: var(--text); }
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r-xs);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ============================================================================
+   Shared components
+   ============================================================================ */
+
+/* — Buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 20px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-weight: 500; font-size: 15px; letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease), transform 0.08s var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: var(--accent-contrast); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+.btn-ghost:hover { background: var(--surface-2); border-color: var(--text-faint); }
+.btn-soft { background: var(--accent-soft); color: var(--accent); }
+.btn-soft:hover { background: var(--accent-soft-2); }
+.btn-sm { height: 36px; padding: 0 14px; font-size: 13.5px; }
+.btn-icon { width: 44px; height: 44px; padding: 0; border-radius: var(--r-pill); }
+
+/* — Chips / filters — */
+.chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: 13.5px; font-weight: 500; color: var(--text-muted);
+  transition: all var(--dur) var(--ease);
+}
+.chip:hover { border-color: var(--text-faint); color: var(--text); }
+.chip[aria-pressed="true"], .chip.is-active {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-contrast);
+}
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.85; }
+
+/* — Inputs — */
+.field {
+  display: flex; align-items: center; gap: 10px;
+  height: 48px; padding: 0 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.field:focus-within { border-color: var(--accent); box-shadow: var(--ring); }
+.field input { flex: 1; border: none; background: none; outline: none; font-size: 15px; }
+.field input::placeholder { color: var(--text-faint); }
+
+/* — Badge — */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 24px; padding: 0 9px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.badge-good    { background: var(--good-soft); color: var(--good); }
+.badge-accent  { background: var(--accent-soft); color: var(--accent); }
+.badge-outline { border: 1px solid var(--border-strong); color: var(--text-muted); }
+
+/* — Type dot palette — */
+.type-tag {
+  --c: 0.055;
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 22px; padding: 0 9px 0 7px; border-radius: var(--r-pill);
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.01em;
+  background: oklch(0.94 var(--c) var(--th, 300));
+  color: oklch(0.42 0.10 var(--th, 300));
+}
+html[data-theme="dark"] .type-tag {
+  background: oklch(0.34 var(--c) var(--th, 300));
+  color: oklch(0.86 0.09 var(--th, 300));
+}
+.type-tag::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: oklch(0.62 0.13 var(--th, 300));
+}
+
+/* — Divider — */
+.rule { height: 1px; background: var(--border); border: 0; }
+
+/* — Utility — */
+.container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.stack { display: flex; flex-direction: column; }
+.row   { display: flex; align-items: center; }
+.muted { color: var(--text-muted); }
+.faint { color: var(--text-faint); }
+
+@media (max-width: 640px) {
+  .container { padding: 0 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}

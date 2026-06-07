@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>151 Crochet — Design Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+/* ============================================================
+   Layout wrapper
+   ============================================================ */
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+/* ============================================================
+   Top nav
+   ============================================================ */
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 0;
+}
+.top .brand { display: flex; align-items: center; gap: 11px; }
+.top .brand .mark { width: 36px; height: 36px; flex-shrink: 0; }
+.top .brand .wm { display: flex; flex-direction: column; line-height: 1; }
+.top .brand .wm b {
+  font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  text-transform: none; white-space: nowrap; letter-spacing: -0.02em;
+}
+.top .brand .wm span {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  color: var(--text-faint); text-transform: uppercase; margin-top: 3px;
+}
+
+.icon-btn {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: var(--r-pill); color: var(--text-muted);
+  border: 1px solid var(--border);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--text); }
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero { padding: 40px 0 30px; }
+.hero .kicker {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent);
+}
+.hero h1 {
+  font-size: clamp(38px, 6vw, 70px); font-weight: 600;
+  margin: 18px 0 0; letter-spacing: -0.03em; line-height: 1.02;
+}
+.hero p {
+  font-size: 18px; color: var(--text-muted); max-width: 60ch;
+  margin-top: 20px; line-height: 1.6;
+}
+.hero .specs { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 28px; }
+.hero .specs .spec .k {
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--text-faint);
+}
+.hero .specs .spec .v {
+  font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-top: 4px;
+}
+
+/* ============================================================
+   Section label
+   ============================================================ */
+.seclab {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-faint);
+  display: flex; align-items: center; gap: 12px; margin: 64px 0 22px;
+}
+.seclab .ln { flex: 1; height: 1px; background: var(--border); }
+
+/* ============================================================
+   Deliverable cards
+   ============================================================ */
+.deliverables { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+
+.dcard {
+  display: block; border: 1px solid var(--border); border-radius: var(--r-lg);
+  background: var(--surface); overflow: hidden;
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.dcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+.dcard.wide { grid-column: span 2; }
+
+.dcard .thumb {
+  height: 168px; position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border); background: var(--bg-subtle);
+}
+.dcard .body { padding: 18px 20px 20px; }
+.dcard .body .n { font-family: var(--font-mono); font-size: 10px; color: var(--accent); }
+.dcard .body h3 { font-size: 18px; font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+.dcard .body p { font-size: 13.5px; color: var(--text-muted); margin-top: 7px; line-height: 1.55; }
+.dcard .body .go {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 13px;
+  font-size: 13px; font-weight: 600; color: var(--accent);
+}
+
+/* ============================================================
+   Thumbnail mini-renders inside card thumbs
+   ============================================================ */
+
+/* Collection grid */
+.tg {
+  position: absolute; inset: 16px;
+  display: grid; gap: 7px;
+  grid-template-columns: repeat(auto-fill, 54px);
+  grid-auto-rows: 54px;
+  justify-content: center; align-content: center;
+}
+.tcell { border-radius: 8px; position: relative; }
+.tcell.made { box-shadow: inset 0 0 0 1px var(--border); }
+.tcell.made::after {
+  content: ""; position: absolute; inset: 0; border-radius: 8px;
+  background-image: radial-gradient(oklch(1 0 0 / 0.18) 1px, transparent 1.2px);
+  background-size: 7px 7px;
+}
+.tcell.todo { border: 1px dashed var(--border-strong); background: var(--bg-subtle); }
+
+/* Detail page */
+.thumb.det { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 18px; }
+.thumb.det .hero-ph {
+  border-radius: 10px;
+  background: linear-gradient(150deg, oklch(0.90 0.055 145), oklch(0.82 0.07 145));
+  position: relative;
+}
+.thumb.det .hero-ph::after {
+  content: ""; position: absolute; inset: 0; border-radius: 10px;
+  background-image: radial-gradient(oklch(1 0 0 / 0.16) 1px, transparent 1.2px);
+  background-size: 9px 9px;
+}
+.thumb.det .lines { display: flex; flex-direction: column; gap: 7px; justify-content: center; }
+.thumb.det .lines i { height: 8px; border-radius: 4px; background: var(--surface-2); display: block; }
+.thumb.det .lines i.t { width: 55%; height: 14px; background: var(--accent-soft); }
+
+/* Auth / sign-in */
+.thumb.auth { display: flex; }
+.thumb.auth .l { flex: 1.1; background: linear-gradient(160deg, oklch(0.30 0.07 300), oklch(0.22 0.06 300)); }
+.thumb.auth .r { flex: 1; display: grid; place-items: center; }
+.thumb.auth .g {
+  width: 78%; height: 34px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-size: 10px; color: var(--text-muted); box-shadow: var(--shadow-sm);
+}
+
+/* Spec */
+.thumb.spec { padding: 18px; display: flex; gap: 12px; }
+.thumb.spec .toc { width: 34%; display: flex; flex-direction: column; gap: 6px; }
+.thumb.spec .toc i { height: 7px; border-radius: 3px; background: var(--surface-2); }
+.thumb.spec .toc i:first-child { background: var(--accent-soft); width: 80%; }
+.thumb.spec .main { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.thumb.spec .main i { height: 8px; border-radius: 4px; background: var(--surface-2); }
+.thumb.spec .main i.h { width: 60%; height: 14px; background: var(--accent-soft); }
+
+/* Variations */
+.thumb.var { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 18px; }
+.thumb.var .ab { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+
+/* Log a make */
+.thumb.make { padding: 18px; display: flex; flex-direction: column; gap: 9px; }
+.thumb.make .ln { height: 9px; border-radius: 4px; background: var(--surface-2); }
+.thumb.make .ln.t { width: 48%; height: 13px; background: var(--accent-soft); }
+.thumb.make .pdfm {
+  display: flex; align-items: center; gap: 9px;
+  border: 1px solid var(--border); border-radius: 9px; padding: 9px;
+  background: var(--surface); margin-top: auto;
+}
+.thumb.make .pdfm .ic {
+  width: 24px; height: 30px; border-radius: 4px; flex-shrink: 0;
+  background: repeating-linear-gradient(135deg, oklch(0.95 0.01 30) 0 5px, oklch(0.93 0.012 30) 5px 10px);
+  border: 1px solid var(--border);
+  display: grid; place-items: end center; padding-bottom: 3px;
+}
+html[data-theme="dark"] .thumb.make .pdfm .ic {
+  background: repeating-linear-gradient(135deg, oklch(0.30 0.01 30) 0 5px, oklch(0.27 0.012 30) 5px 10px);
+}
+.thumb.make .pdfm .ic b { font-family: var(--font-mono); font-size: 6px; color: oklch(0.55 0.18 25); }
+.thumb.make .pdfm .mln { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.thumb.make .pdfm .mln i { height: 7px; border-radius: 3px; background: var(--surface-2); }
+.thumb.make .pdfm .mln i:first-child { width: 65%; }
+
+/* ============================================================
+   Design system panels
+   ============================================================ */
+.sys { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; }
+
+.panel { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: 22px 24px; }
+.panel h4 {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-faint); font-weight: 400; margin-bottom: 16px;
+}
+
+.sw-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.swx .c { height: 50px; border-radius: 10px; border: 1px solid oklch(0 0 0 / 0.08); }
+.swx .l { font-size: 10.5px; font-weight: 600; margin-top: 7px; }
+.swx .h { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+
+.type-spec .big {
+  font-family: var(--font-display); font-size: 38px; font-weight: 600;
+  letter-spacing: -0.02em; line-height: 1;
+}
+.type-spec .row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--border-soft);
+}
+.type-spec .row:last-child { border-bottom: 0; }
+.type-spec .row .name { font-size: 14px; }
+.type-spec .row .meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+
+/* ============================================================
+   Reasoning cards
+   ============================================================ */
+.reasoning { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+.rcard { border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px 22px; background: var(--surface); }
+.rcard .ic {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; margin-bottom: 13px;
+}
+.rcard h4 { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+.rcard p { font-size: 13.5px; color: var(--text-muted); margin-top: 7px; line-height: 1.6; }
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.foot {
+  border-top: 1px solid var(--border); margin-top: 70px;
+  padding: 30px 0 60px; color: var(--text-faint); font-size: 13px; line-height: 1.6;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 760px) {
+  .wrap { padding: 0 18px; }
+  .deliverables { grid-template-columns: 1fr; }
+  .dcard.wide { grid-column: span 1; }
+  .sys, .reasoning { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top navigation -->
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="151 Crochet — home">
+      <svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <rect width="36" height="36" rx="10" fill="var(--accent-soft)"/>
+        <circle cx="14" cy="18" r="6.8" stroke="var(--accent)" stroke-width="2.2"/>
+        <circle cx="22" cy="18" r="6.8" stroke="var(--accent)" stroke-width="2.2"/>
+      </svg>
+      <span class="wm"><b>151 Crochet</b><span>Design Overview</span></span>
+    </a>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle light / dark theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="kicker">Frontend design package · v1</div>
+    <h1>Catalogue every<br>Pokémon you make.</h1>
+    <p>A clean, editorial collection tool for crochet makers working through the original 151. Personal, private, Google sign-in — designed to feel like a gallery, not a spreadsheet. Light and dark, phone to desktop.</p>
+    <div class="specs" aria-label="Design specs">
+      <div class="spec"><div class="k">Aesthetic</div><div class="v">Clean &amp; editorial</div></div>
+      <div class="spec"><div class="k">Accent</div><div class="v">Soft violet</div></div>
+      <div class="spec"><div class="k">Type</div><div class="v">Space Grotesk · Manrope</div></div>
+      <div class="spec"><div class="k">Deliverables</div><div class="v">4 screens + spec + CSS</div></div>
+    </div>
+  </section>
+
+  <!-- Deliverables -->
+  <div class="seclab" aria-hidden="true">Deliverables <span class="ln"></span> click to open</div>
+  <nav class="deliverables" aria-label="Design deliverables">
+
+    <!-- 01 · Collection grid (wide) -->
+    <a class="dcard wide" href="Collection.html">
+      <div class="thumb" aria-hidden="true">
+        <div class="tg" id="tgGrid"></div>
+      </div>
+      <div class="body">
+        <div class="n">01 · SCREEN</div>
+        <h3>Collection grid <span class="badge badge-accent">home</span></h3>
+        <p>The landing view: prominent search, progress ring, made / to-make filters, and the 151 as a responsive grid. Faint placeholder slots for what's still to make.</p>
+        <span class="go">Open screen <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- 02 · Creature detail -->
+    <a class="dcard" href="Detail.html">
+      <div class="thumb det" aria-hidden="true">
+        <div class="hero-ph"></div>
+        <div class="lines">
+          <i class="t"></i>
+          <i style="width:80%"></i>
+          <i style="width:60%"></i>
+          <i style="width:70%"></i>
+        </div>
+      </div>
+      <div class="body">
+        <div class="n">02 · SCREEN</div>
+        <h3>Creature detail</h3>
+        <p>Photo gallery, pattern &amp; materials, yarn and colors, plus the maker's story behind the make.</p>
+        <span class="go">Open screen <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- 03 · Log a make -->
+    <a class="dcard" href="LogMake.html">
+      <div class="thumb make" aria-hidden="true">
+        <div class="ln t"></div>
+        <div class="ln" style="width:80%"></div>
+        <div class="pdfm">
+          <span class="ic"><b>PDF</b></span>
+          <span class="mln"><i></i><i></i></span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="n">03 · SCREEN</div>
+        <h3>Log a make <span class="badge badge-accent">+ PDF</span></h3>
+        <p>The create flow: pick the creature, add photos, and record the pattern — including uploading the pattern <strong>PDF</strong> — plus yarn, colors, and the story.</p>
+        <span class="go">Open screen <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- 04 · Sign in -->
+    <a class="dcard" href="SignIn.html">
+      <div class="thumb auth" aria-hidden="true">
+        <div class="l"></div>
+        <div class="r">
+          <div class="g">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"/>
+            </svg>
+            Continue with Google
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="n">04 · SCREEN</div>
+        <h3>Sign in</h3>
+        <p>Single-provider Google auth with a split editorial showcase and clear data scope.</p>
+        <span class="go">Open screen <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- 05 · Design variations -->
+    <a class="dcard" href="Variations.html">
+      <div class="thumb var" aria-hidden="true">
+        <div class="ab"></div>
+        <div class="ab"></div>
+        <div class="ab"></div>
+      </div>
+      <div class="body">
+        <div class="n">05 · EXPLORATION</div>
+        <h3>Design variations</h3>
+        <p>Side-by-side directions for card style, grid layout, and the detail page — on a pannable canvas to mix &amp; match.</p>
+        <span class="go">Open canvas <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- 06 · UX specification -->
+    <a class="dcard" href="Spec.html">
+      <div class="thumb spec" aria-hidden="true">
+        <div class="toc"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="main">
+          <i class="h"></i>
+          <i style="width:90%"></i>
+          <i style="width:80%"></i>
+          <i style="width:85%"></i>
+          <i style="width:60%"></i>
+        </div>
+      </div>
+      <div class="body">
+        <div class="n">06 · DOCUMENT</div>
+        <h3>UX specification</h3>
+        <p>Goals, audience, IA, critical user journeys, the log-a-make &amp; sign-in flows, screen requirements, states, responsive &amp; accessibility.</p>
+        <span class="go">Open spec <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+  </nav>
+
+  <!-- Design system -->
+  <div class="seclab" aria-hidden="true">The system <span class="ln"></span> tokens in styles/tokens.css</div>
+  <div class="sys">
+    <div class="panel">
+      <h4>Color · light + dark via oklch</h4>
+      <div class="sw-grid" aria-label="Color swatches">
+        <div class="swx"><div class="c" style="background:var(--accent)"></div><div class="l">Accent</div><div class="h">violet</div></div>
+        <div class="swx"><div class="c" style="background:var(--accent-soft)"></div><div class="l">Soft</div><div class="h">tint</div></div>
+        <div class="swx"><div class="c" style="background:var(--bg)"></div><div class="l">Bg</div><div class="h">warm</div></div>
+        <div class="swx"><div class="c" style="background:var(--text)"></div><div class="l">Ink</div><div class="h">near-black</div></div>
+        <div class="swx"><div class="c" style="background:var(--good)"></div><div class="l">Made</div><div class="h">green</div></div>
+      </div>
+      <h4 style="margin-top:24px">Type colors · 18 creature types</h4>
+      <div class="sw-grid" id="typeSwatches" aria-label="Type color swatches"></div>
+    </div>
+
+    <div class="panel type-spec">
+      <h4>Typography</h4>
+      <div class="big">Bulbasaur</div>
+      <div style="margin-top:18px">
+        <div class="row">
+          <span class="name" style="font-family:var(--font-display);font-weight:600;font-size:18px">Space Grotesk</span>
+          <span class="meta">display · headings</span>
+        </div>
+        <div class="row">
+          <span class="name" style="font-family:var(--font-body);font-size:15px">Manrope — body &amp; UI text</span>
+          <span class="meta">400–800</span>
+        </div>
+        <div class="row">
+          <span class="name mono" style="font-size:13px">SPACE MONO · SPECS</span>
+          <span class="meta">labels · numbers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Design reasoning -->
+  <div class="seclab" aria-hidden="true">Why it's designed this way <span class="ln"></span></div>
+  <div class="reasoning">
+
+    <div class="rcard">
+      <div class="ic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+      </div>
+      <h4>The grid is the product</h4>
+      <p>Everything orbits one canonical grid of 151. The slow fill from faint placeholders to colored makes is the core emotional payoff, so it's the home screen and never buried behind navigation.</p>
+    </div>
+
+    <div class="rcard">
+      <div class="ic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7h18M3 12h18M3 17h12"/>
+        </svg>
+      </div>
+      <h4>Editorial, not gamified</h4>
+      <p>Crisp neutrals, generous whitespace, a single soft-violet accent, and mono labels for craft specs. It reads like a maker's catalogue — calm and grown-up — rather than a badge-grinding app.</p>
+    </div>
+
+    <div class="rcard">
+      <div class="ic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+        </svg>
+      </div>
+      <h4>Two-tap logging</h4>
+      <p>The make is captured straight off the hook: only the creature and one photo are required; pattern, yarn, and colors are encouraged but never block the save. Drafts autosave.</p>
+    </div>
+
+    <div class="rcard">
+      <div class="ic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+        </svg>
+      </div>
+      <h4>State carried beyond color</h4>
+      <p>Made vs. to-make uses a check icon, a label, and a dashed border — not hue alone — so the collection is legible in both themes and to color-blind makers.</p>
+    </div>
+
+  </div>
+
+  <footer class="foot">
+    <strong style="color:var(--text-muted)">151 Crochet Collection — design package.</strong><br>
+    An independent fan project concept by &amp; for crochet makers. Creature names are used as a maker's checklist; all imagery is placeholder for user-uploaded photos. Not affiliated with, endorsed by, or sponsored by Nintendo, Game Freak, or The Pokémon Company.
+  </footer>
+
+</div><!-- /.wrap -->
+
+<script>
+/* Theme persistence */
+const root = document.documentElement;
+const saved = localStorage.getItem('theme151');
+if (saved) root.dataset.theme = saved;
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  localStorage.setItem('theme151', next);
+});
+
+/* Collection grid thumbnail */
+const hues = [145, 42, 255, 100, 80, 312, 70, 350, 295, 215, 275, 235, 85, 30, 355, 120];
+const made = new Set([0, 2, 5, 7, 8, 11, 13, 17, 19, 22, 26, 30]);
+let cells = '';
+for (let i = 0; i < 34; i++) {
+  const h = hues[i % hues.length];
+  const m = made.has(i);
+  const bg = m ? `background:linear-gradient(150deg,oklch(0.88 0.06 ${h}),oklch(0.80 0.075 ${h}))` : '';
+  cells += `<div class="tcell ${m ? 'made' : 'todo'}" style="${bg}"></div>`;
+}
+document.getElementById('tgGrid').innerHTML = cells;
+
+/* Type swatches */
+const types = [['Grass',145],['Fire',42],['Water',255],['Electric',100],['Psychic',355]];
+document.getElementById('typeSwatches').innerHTML = types.map(([name, h]) =>
+  `<div class="swx"><div class="c" style="background:oklch(0.72 0.12 ${h})"></div><div class="l">${name}</div></div>`
+).join('');
+</script>
+</body>
+</html>
