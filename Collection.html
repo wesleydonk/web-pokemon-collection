@@ -228,6 +228,11 @@ html[data-theme="dark"] .cell.draft .photo::after {
   font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; color: oklch(0.52 0.12 70); }
 html[data-theme="dark"] .cell.draft .draft-badge { background: var(--surface); border-color: oklch(0.5 0.1 70); color: oklch(0.82 0.11 70); }
 .cell.draft .draft-badge .d { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); }
+.cell.draft .poke-img {
+  position: absolute; width: 82%; height: auto; z-index: 2;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 14px oklch(0.20 0.10 var(--th) / 0.35));
+}
 .cell.draft .by { color: oklch(0.54 0.11 70); }
 html[data-theme="dark"] .cell.draft .by { color: oklch(0.80 0.10 70); }
 
@@ -452,6 +457,7 @@ function cellHTML([dex,name,type]){
     return `<a class="cell draft" style="--th:${hue}" data-type="${type}" data-state="draft" href="LogMake.html?dex=${dex}&draft=1">
       <div class="photo">
         <span class="dex" style="color:oklch(0.5 0.1 70)">№${num}</span>
+        <img class="poke-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dex}.png" alt="${name}" loading="lazy">
         <span class="draft-badge"><span class="d"></span> Draft</span>
       </div>
       <div class="meta">
